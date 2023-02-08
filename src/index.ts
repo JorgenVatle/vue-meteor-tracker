@@ -1,6 +1,18 @@
-import { Tracker } from 'meteor/tracker'
 import { Meteor } from 'meteor/meteor'
-import { App, computed, ComputedRef, getCurrentInstance, markRaw, onUnmounted, reactive, ref, watch, watchEffect } from 'vue'
+import { Tracker } from 'meteor/tracker'
+import {
+  App,
+  computed,
+  ComputedRef,
+  getCurrentInstance,
+  markRaw,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+  watchEffect,
+} from 'vue'
+import { makeSetupOnlyFunction } from './utility/makeSetupOnlyFunction'
 
 export const config = {
   subscribe: Meteor.subscribe,
@@ -127,19 +139,6 @@ function makeComposable <
 
 export const useAutorun = makeComposable<'autorun', ReturnType<typeof autorun>, typeof autorun>('autorun', autorun)
 export const useSubscribe = makeComposable<'subscribe', ReturnType<typeof subscribe>, typeof subscribe>('subscribe', subscribe)
-
-function makeSetupOnlyFunction <
-  TFn extends (...args: any[]) => any
-> (fn: TFn): TFn {
-  return ((...args) => {
-    if (process.env.NODE_ENV !== 'production') {
-      if (!getCurrentInstance()) {
-        console.warn(`'${fn.name}()' should only be used in setup() inside components to clean up correctly. If you need to call '${fn.name}' later outside of the setup context, use 'use${fn.name[0].toUpperCase()}${fn.name.slice(1)}()' instead.`)
-      }
-    }
-    return fn(...args)
-  }) as TFn
-}
 
 const setupOnlyAutorun = makeSetupOnlyFunction(autorun)
 const setupOnlySubscribe = makeSetupOnlyFunction(subscribe)
