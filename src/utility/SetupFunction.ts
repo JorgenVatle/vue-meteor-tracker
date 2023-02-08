@@ -1,6 +1,7 @@
 import { getCurrentInstance } from 'vue'
+import { autorun, subscribe } from './MeteorTracker'
 
-export function makeSetupOnlyFunction<
+function makeSetupOnlyFunction<
     TFn extends (...args: any[]) => any
 >(fn: TFn): TFn {
   return ((...args) => {
@@ -13,3 +14,6 @@ export function makeSetupOnlyFunction<
     return fn(...args)
   }) as TFn
 }
+
+export const setupOnlyAutorun = makeSetupOnlyFunction(autorun)
+export const setupOnlySubscribe = makeSetupOnlyFunction(subscribe)
